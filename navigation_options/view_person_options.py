@@ -5,8 +5,8 @@ from navigation_options.delete_person_options import delete_person_options
 def view_person_options(selected_person):
     os.system('clear')
 
-    print("\n===View Person Details===")
-    print(f"Name: {selected_person.name}")
+    print("\n===View Person Details===\n")
+    print(f"{selected_person.name}")
     print(f"DOB: {selected_person.dob}")
     
     print("\nPhone Numbers:")
@@ -15,7 +15,7 @@ def view_person_options(selected_person):
     print("\nEmail Addresses:")
     print("Not implemented")
 
-    print("\n===Actions===")
+    print("\n====================")
     print("1. Update Person")
     print("2. Delete Person")
     print("3. Return to Main Menu")
