@@ -9,11 +9,12 @@ def main_menu():
     os.system('clear')
 
     while True:
-        print("\n===Main Menu===")
+        os.system('clear')
+        print("\nMain Menu\n")
         print("1. Add person")
         print("2. List people")
         print("3. Exit")
-        choice = input("\nSelect an option: ")
+        choice = input("\n> ")
 
         if choice == '1':
             print("\n1: Add person")

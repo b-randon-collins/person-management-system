@@ -1,17 +1,20 @@
+import os
+
 def update_phone_numbers_options(selected_person):
+    os.system('clear')
+
     while True:
-        print("\n===Update Phone Numbers===")
+        print("\nUpdate Phone Numbers")
         print("1. Add Phone Number")
         print("2. Update Existing Phone Numbers")
         print("3. Return to Update Person Options")
 
-        choice = input("\nSelect an option: ")
+        choice = input("\n> ")
 
         if choice == '1':
             while True:
                 phone_number = input("Enter Phone Number (7 or 10 digits): ")
                 if len(phone_number) in [7, 10] and phone_number.isdigit():
-                    # Add the phone number to the person's data (assuming a method or list)
                     selected_person.phone_numbers.append(phone_number)
                     print(f"Phone number {phone_number} added.")
                     add_more = input("Add another? (y/n): ")
@@ -21,7 +24,6 @@ def update_phone_numbers_options(selected_person):
                     print("Invalid phone number format. Please try again.")
 
         elif choice == '2':
-            # Display existing phone numbers
             if not selected_person.phone_numbers:
                 print("No phone numbers to update.")
                 continue

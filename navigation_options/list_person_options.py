@@ -8,13 +8,13 @@ def list_person_options(people_list):
     os.system('clear')
 
     while True:
-        print("\n===List Person Options===")
+        print("\nPeople\n")
         
         for person in people_list:
             print(f"{person.id}. {person.name}")
             choices[person.id] = person
             
-        choice = input("\nSelect an option: ")
+        choice = input("\n> ")
         
         if choice.isdigit() and int(choice) in choices:
             selected_person = choices[int(choice)]

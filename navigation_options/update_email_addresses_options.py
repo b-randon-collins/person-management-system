@@ -1,6 +1,6 @@
 def update_email_addresses_options(selected_person):
     while True:
-        print("\n===Update Email Addresses===")
+        print("\nUpdate Email Addresses")
         print("1. Add Email Address")
         print("2. Update Existing Email Addresses")
         print("3. Return to Update Person Options")
