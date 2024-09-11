@@ -6,9 +6,12 @@ import os
 
 DATABASE_URL = "sqlite:///resources.db"
 
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(DATABASE_URL, echo=False)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
+
+def get_session():
+    return SessionLocal()
 
 def initialize_database():
     try:
@@ -17,5 +20,6 @@ def initialize_database():
         print(f"Failed to create tables: {str(e)}")
 
 initialize_database()
+
 
 engine.dispose()
