@@ -20,7 +20,6 @@ def update_email_addresses_options(selected_person):
                     print("Invalid email format. Please try again.")
 
         elif choice == '2':
-            # Display existing email addresses
             if not selected_person.email_addresses:
                 print("No email addresses to update.")
                 continue

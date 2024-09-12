@@ -1,11 +1,11 @@
 # main_menu.py
 import os
+import time
 from person import Person
-from db import initialize_database
 from navigation_options.list_person_options import list_person_options
+from initialize import initialize_database
 
 def main_menu():
-    initialize_database()
     os.system('clear')
 
     while True:
@@ -32,3 +32,4 @@ def main_menu():
 
         else:
             print("Error: Invalid choice. Please select a valid option.")
+            time.sleep(1)

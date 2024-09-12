@@ -25,7 +25,7 @@ def update_person_options(selected_person):
                 print(f"Name updated to {selected_person.name}")
             else:
                 print("Name unchanged.")
-            time.sleep(2) 
+            time.sleep(1) 
 
         elif choice == '2':
             new_dob = input(f"Enter new DOB (leave blank to keep the same): ")
@@ -47,4 +47,4 @@ def update_person_options(selected_person):
 
         else:
             print("Invalid option. Please select again.")
-            time.sleep(2)  # Pause for 2 seconds if an invalid option is selected
+            time.sleep(2)

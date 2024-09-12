@@ -1,41 +1,36 @@
-#  person.py
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.ext.declarative import declarative_base
-from db import Base, get_session
+# person.py
+from sqlalchemy import text
+from initialize import engine
 
-
-
-class Person(Base):
-    __tablename__ = 'person'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    dob = Column(String, nullable=True)
-	# phone_numbers = relationship("PhoneNumber", back_populates="person", cascade="all, delete-orphan")
-	# email_addresses = relationship("EmailAddress", back_populates="person", cascade="all, delete-orphan")
-
+class Person:
     @staticmethod
     def list_people():
-        session = get_session()
+        with engine.connect() as connection:
+            try:
+                sql = text("SELECT * FROM person")
+                result = connection.execute(sql)
+                people_list = result.fetchall()
 
-        try:
-            people_list = session.query(Person).all()
+                if people_list:
+                    for id, person in enumerate(people_list, 1):
+                        # print(f"Person {id}: {person}")
+                        pass
+                else:
+                    print("No people found.")
 
-            if people_list:
-                for id, person in enumerate(people_list, 1):
-                    pass
-            else:
-                print("No people found.")
-                
-            return people_list
+                return people_list
 
-        except Exception as e:
-            print(f"Error retrieving people: {str(e)}")
-            return []
-
-        finally:
-            session.close()
+            except Exception as e:
+                print(f"Error retrieving people: {str(e)}")
+                return []
 
     @staticmethod
-    def add_person():
-        print("add Person selected")
+    def add_person(name, dob):
+        with engine.connect() as connection:
+            try:
+                sql = text("INSERT INTO person (name, dob) VALUES (:name, :dob)")
+                connection.execute(sql, {'name': name, 'dob': dob})
+                print(f"Added person: {name}, DOB: {dob}")
+
+            except Exception as e:
+                print(f"Error adding person: {str(e)}")

@@ -24,7 +24,10 @@ def view_person_options(selected_person):
     if choice == '1':
         update_person_options(selected_person)
     elif choice == '2':
-        delete_person_options(selected_person)
+        result = delete_person_options(selected_person)
+        if result == "deleted":
+            os.system('clear')
+            return
     elif choice == '3':
         return
     else:

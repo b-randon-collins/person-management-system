@@ -4,7 +4,7 @@ def update_phone_numbers_options(selected_person):
     os.system('clear')
 
     while True:
-        print("\nUpdate Phone Numbers")
+        print("\nUpdate Phone Numbers\n")
         print("1. Add Phone Number")
         print("2. Update Existing Phone Numbers")
         print("3. Return to Update Person Options")
