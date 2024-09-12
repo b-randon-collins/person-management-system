@@ -53,3 +53,7 @@ def add_person_workflow():
             break
         else:
             print("Invalid choice! Please try again.")
+
+if __name__ == "__main__":
+    initialize_db()
+    main_menu()
