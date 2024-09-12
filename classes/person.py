@@ -1,6 +1,6 @@
 import sqlite3
 
-CONN = sqlite3.connect('resources.db')
+CONN = sqlite3.connect('resource.db')
 CURSOR = CONN.cursor()
 
 class Person:
@@ -28,7 +28,8 @@ class Person:
         '''
         CURSOR.execute(sql, (name, dob))
         CONN.commit()
-
+        return CURSOR.lastrowid
+    
     @staticmethod
     def list_people():
         sql = 'SELECT * FROM Person'
@@ -36,12 +37,14 @@ class Person:
 
         return [Person(id=row[0], name=row[1], dob=row[2]) for row in people]
 
-
     @staticmethod
     def get_person(person_id):
         sql = 'SELECT * FROM Person WHERE id = ?'
-        return CURSOR.execute(sql, (person_id,)).fetchone()
-
+        row = CURSOR.execute(sql, (person_id,)).fetchone()
+        if row:
+            return Person(id=row[0], name=row[1], dob=row[2])
+        return None
+    
     @staticmethod
     def edit_name(person_id, new_name):
         sql = 'UPDATE Person SET name = ? WHERE id = ?'
