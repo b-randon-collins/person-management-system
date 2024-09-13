@@ -16,7 +16,7 @@ def initialize_db():
     conn.close()
 
 def clear_screen():
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system('clear')
 
 def validate_dob(dob):
     try:
@@ -51,17 +51,16 @@ def is_valid_email(email):
 
 PHONE_NUMBER_PATTERNS = [
     r'^\d{7}$',                # xxxxxxx
+    r'^\d{8}$',                # xxxxxxxx
+    r'^\d{10}$',               # xxxxxxxxxx
     r'^\d{11}$',               # xxxxxxxxxxx
     r'^\d{3}-\d{3}-\d{4}$',    # xxx-xxx-xxxx
-    r'^\d{3}-\d{3}-\d{4}$',  # xxx-xxx-xxxx
     r'^\d{1}-\d{3}-\d{3}-\d{4}$'  # x-xxx-xxx-xxxx
 ]
 
 def is_valid_phone_number(phone_number):
-    for pattern in PHONE_NUMBER_PATTERNS:
-        if re.fullmatch(pattern, phone_number):
-            return True
-    return False
+    return any(re.fullmatch(pattern, phone_number) for pattern in PHONE_NUMBER_PATTERNS)
+
 
 def add_person_workflow():
     clear_screen()
@@ -97,7 +96,6 @@ def add_person_workflow():
     next_step_menu(person_id)
 
 def next_step_menu(person_id):
-    """Displays the next steps after adding a person."""
     print("\nWhat would you like to do next?")
     print("1. View the entry")
     print("2. Create a new person")
@@ -188,31 +186,45 @@ def list_people_workflow():
         list_people_workflow()
 
 def view_person_workflow(person_id):
-    clear_screen()
+    
     person = Person.get_person(person_id)
     
     if person:
         print(f"Name: {person.name}")
         print(f"DOB: {person.dob}\n")
 
+        # Fetch and display phone numbers
         phone_numbers = PhoneNumber.get_phone_numbers(person_id)
         print("Phone numbers:")
-        for phone in phone_numbers:
-            print(f"  {phone[2]}")  
+        if phone_numbers:
+            for phone in phone_numbers:
+                print(f"  {phone[2]}")
+        else:
+            print("  No phone numbers")
 
+        print("")
+
+        # Fetch and display email addresses
         email_addresses = EmailAddress.get_email_addresses(person_id)
-        print("Email addresses:\n")
-        for email in email_addresses:
-            print(f"  {email[2]}")  
-            print("")  
+        print("Email addresses:")
+        if email_addresses:
+            for email in email_addresses:
+                print(f"  {email[2]}")
+        else:
+            print("  No emails")
+        
+        print("")
 
+        # Show person options
         view_person_options(person_id)
     else:
         print("Person not found.")
         time.sleep(1)
         list_people_workflow()
 
+
 def view_person_options(person_id):
+   
     print("1. Update person")
     print("2. Delete person")
     print("3. Return to list")
@@ -239,31 +251,45 @@ def view_person_options(person_id):
             return
         else:
             print("Invalid choice! Please try again.")
+            time.sleep(1)
+            view_person_options(person_id)
 
 def update_person_workflow(person_id):
     clear_screen()
     person = Person.get_person(person_id)
     if person:
         print("")
-
         print(f"Name: {person.name}")
         print(f"DOB: {person.dob}\n")
 
+        # Fetch phone numbers and check if the list is empty
         phone_numbers = PhoneNumber.get_phone_numbers(person_id)
         print("Phone numbers:")
-        for phone in phone_numbers:
-            print(f"  {phone[2]}")  
+        if phone_numbers:
+            for phone in phone_numbers:
+                print(f"  {phone[2]}")
+        else:
+            print("  No phone numbers")
 
+        print("")
+
+        # Fetch email addresses and check if the list is empty
         email_addresses = EmailAddress.get_email_addresses(person_id)
-        print("Email addresses:\n")
-        for email in email_addresses:
-            print(f"  {email[2]}")  
+        print("Email addresses:")
+        if email_addresses:
+            for email in email_addresses:
+                print(f"  {email[2]}")
+        else:
+            print("  No emails")
 
+        # Proceed to the next step in the workflow
         view_person_workflow(person_id)
+
     else:
         print("Person not found.")
         time.sleep(1)
         list_people_workflow()
+
 
 def update_name(person_id):
     while True:
@@ -295,18 +321,27 @@ def update_person_options(person_id, auto_select=None):
     print(f"Name: {person.name}")
     print(f"DOB: {person.dob}\n")
 
+    # Fetch phone numbers and email addresses
     phone_numbers = PhoneNumber.get_phone_numbers(person_id)
     email_addresses = EmailAddress.get_email_addresses(person_id)
 
+    # Print phone numbers or show message if empty
     print("Phone numbers:")
-    for i, phone in enumerate(phone_numbers):
-        print(f"  {i + 1}. {phone[2]}")
+    if phone_numbers:
+        for i, phone in enumerate(phone_numbers):
+            print(f"  {i + 1}. {phone[2]}")
+    else:
+        print("  No phone numbers")
 
     print("")
 
+    # Print email addresses or show message if empty
     print("Email addresses:")
-    for i, email in enumerate(email_addresses):
-        print(f"  {i + 1}. {email[2]}")
+    if email_addresses:
+        for i, email in enumerate(email_addresses):
+            print(f"  {i + 1}. {email[2]}")
+    else:
+        print("  No emails")
 
     if auto_select is None:
         auto_select = []
@@ -316,6 +351,7 @@ def update_person_options(person_id, auto_select=None):
     print("3. Update phone numbers")
     print("4. Update email addresses")
     print("5. Back")
+
 
     choice = auto_select.pop(0) if auto_select else input("\n > ")
 
@@ -353,20 +389,27 @@ def update_person_options(person_id, auto_select=None):
     print(f"Name: {person.name}")
     print(f"DOB: {person.dob}\n")
 
+    # Fetch phone numbers and email addresses
     phone_numbers = PhoneNumber.get_phone_numbers(person_id)
     email_addresses = EmailAddress.get_email_addresses(person_id)
 
+    # Print phone numbers or show message if empty
     print("Phone numbers:")
-    for i, phone in enumerate(phone_numbers):
-        print(f"  {i + 1}. {phone[2]}")  
+    if phone_numbers:
+        for i, phone in enumerate(phone_numbers):
+            print(f"{phone[2]}")
+    else:
+        print("  No phone numbers")
 
-        
     print("")
+
+    # Print email addresses or show message if empty
     print("Email addresses:")
-    print("")
-
-    for i, email in enumerate(email_addresses):
-        print(f"  {i + 1}. {email[2]}") 
+    if email_addresses:
+        for i, email in enumerate(email_addresses):
+            print(f"  {i + 1}. {email[2]}")
+    else:
+        print("  No emails")
 
     if auto_select is None:
         auto_select = []
@@ -376,6 +419,7 @@ def update_person_options(person_id, auto_select=None):
     print("3. Update phone numbers")
     print("4. Update email addresses")
     print("5. Back")
+
 
     choice = auto_select.pop(0) if auto_select else input("\n > ")
 
@@ -413,16 +457,26 @@ def update_person_options(person_id, auto_select=None):
         print(f"Name: {person.name}")
         print(f"DOB: {person.dob} \n")
 
+        # Fetch phone numbers
         phone_numbers = PhoneNumber.get_phone_numbers(person_id)
         print("Phone numbers:")
-        for phone in phone_numbers:
-            print(f"  {phone[2]}")  
+        if phone_numbers:
+            for phone in phone_numbers:
+                print(f"  {phone[2]}")
+        else:
+            print("  No phone numbers")
 
+        # Fetch email addresses
         email_addresses = EmailAddress.get_email_addresses(person_id)
-        print("Email addresses:")
-        for email in email_addresses:
-            print(f"  {email[2]}") 
+        print("\nEmail addresses:")
+        if email_addresses:
+            for email in email_addresses:
+                print(f"  {email[2]}")
+        else:
+            print("  No emails")
+
         print("")
+
 
         print("1. Edit name")
         print("2. Edit DOB")
@@ -457,87 +511,131 @@ def update_person_options(person_id, auto_select=None):
             time.sleep(1)
             update_person_options(person_id, auto_select=None)
 
+
+
 def update_phone_numbers_options(person_id, auto_select=None):
-    def display_options():
-        clear_screen()
-        person = Person.get_person(person_id)
-        if not person:
-            print("Person not found.")
-            return
+    clear_screen()
+    print("update_phone_numbers_options")
+    phone_numbers = PhoneNumber.get_phone_numbers(person_id)
 
-        print(f"Name: {person.name}")
-        print(f"DOB: {person.dob}\n")
-
-        phone_numbers = PhoneNumber.get_phone_numbers(person_id)
-        print("Phone numbers:")
+    print("Phone numbers:")
+    if phone_numbers:
         for i, phone in enumerate(phone_numbers):
-            print(f"{i + 1}. {phone[2]}")
-
+            print(f"  {i + 1}. {phone[2]}")
         print("\n1. Add phone number")
-        print("2. Update phone numbers")
-        print("3. Back")
-
-        return phone_numbers
+        print("2. Edit phone number")
+        print("3. Delete phone number")
+        print("4. Back")
+    else:
+        print("No phone numbers")
+        print("\n1. Add phone number")
+        print("2. Back")
 
     while True:
-        phone_numbers = display_options()
-        if phone_numbers is None:
-            return
-
-        if auto_select is None:
-            auto_select = []
-
-        choice = auto_select.pop(0) if auto_select else input("\n > ")
+        choice = auto_select.pop(0) if auto_select else input("\n > ").strip()
 
         if choice == '1':
             while True:
-                phone_number = input("Phone Number xxx-xxx-xxxx: ").strip()
-                if is_valid_phone_number(phone_number):
-                    PhoneNumber.add_phone_number(person_id, phone_number)
+                new_phone = input("Enter new phone number: ").strip()
+                if new_phone and is_valid_phone_number(new_phone):
+                    PhoneNumber.add_phone_number(person_id, new_phone)
                     print("Phone number added successfully.")
-                    if input("Add another? (y/n): ").lower() != 'y':
-                        break
+                    break
                 else:
                     print("Invalid phone number format. Please try again.")
-                    if input("Do you want to retry? (y/n): ").lower() != 'y':
-                        break
+        
         elif choice == '2':
-            if not phone_numbers:
-                print("No phone numbers to update.")
-                time.sleep(1)
-                continue
-
-            while True:
-                try:
-                    phone_id = int(input("Select phone number by ID to update: ")) - 1
-                    if 0 <= phone_id < len(phone_numbers):
-                        while True:
-                            new_phone_number = input("Enter the new phone number: ").strip()
-                            if is_valid_phone_number(new_phone_number):
-                                PhoneNumber.edit_phone_number(phone_numbers[phone_id][0], new_phone_number)
+            if phone_numbers:
+                while True:
+                    phone_index = input("Enter the number to edit: ").strip()
+                    if phone_index.isdigit():
+                        phone_index = int(phone_index) - 1
+                        if 0 <= phone_index < len(phone_numbers):
+                            new_phone = input(f"Enter new phone number (old: {phone_numbers[phone_index][2]}): ").strip()
+                            if new_phone and is_valid_phone_number(new_phone):
+                                PhoneNumber.edit_phone_number(phone_numbers[phone_index][0], new_phone)
                                 print("Phone number updated successfully.")
-                                time.sleep(1)
                                 break
                             else:
                                 print("Invalid phone number format. Please try again.")
-                                if input("Do you want to retry? (y/n): ").lower() != 'y':
-                                    break
-                        break
+                        else:
+                            print("Invalid selection.")
                     else:
-                        print("Invalid ID! Please try again.")
-                        if input("Do you want to retry? (y/n): ").lower() != 'y':
-                            break
-                except ValueError:
-                    print("Invalid input! Please enter a number.")
-                    if input("Do you want to retry? (y/n): ").lower() != 'y':
-                        break
+                        print("Please enter a valid number.")
+            else:
+                print("No phone numbers to edit.")
+        
         elif choice == '3':
+            if phone_numbers:
+                while True:
+                    phone_index = input("Enter the number to delete: ").strip()
+                    if phone_index.isdigit():
+                        phone_index = int(phone_index) - 1
+                        if 0 <= phone_index < len(phone_numbers):
+                            PhoneNumber.delete_phone_number(phone_numbers[phone_index][0])
+                            print("Phone number deleted successfully.")
+                            break
+                        else:
+                            print("Invalid selection.")
+                    else:
+                        print("Please enter a valid number.")
+            else:
+                print("No phone numbers to delete.")
+        
+        elif choice == '4':
             return
         else:
             print("Invalid choice! Please try again.")
-            time.sleep(1)
+
+        time.sleep(1)
 
 def update_email_addresses_options(person_id, auto_select=None):
+    clear_screen()
+    email_addresses = EmailAddress.get_email_addresses(person_id)
+
+    print("Email addresses:")
+    if email_addresses:
+        for i, email in enumerate(email_addresses):
+            print(f"  {i + 1}. {email[2]}")
+        print("\n1. Add email address")
+        print("2. Edit email address")
+        print("3. Delete email address")
+        print("4. Back")
+    else:
+        print("  No email addresses")
+        print("\n1. Add email address")
+        print("2. Back")
+
+
+    choice = auto_select.pop(0) if auto_select else input("\n > ")
+
+    if choice == '1':
+        new_email = input("Enter new email address: ")
+        EmailAddress.add_email_address(person_id, new_email)
+        print("Email address added successfully.")
+    elif choice == '2':
+        email_index = int(input("Enter the number to edit: ")) - 1
+        if 0 <= email_index < len(email_addresses):
+            new_email = input(f"Enter new email address (old: {email_addresses[email_index][2]}): ")
+            EmailAddress.edit_email_address(email_addresses[email_index][0], new_email)
+            print("Email address updated successfully.")
+        else:
+            print("Invalid selection.")
+    elif choice == '3':
+        email_index = int(input("Enter the number to delete: ")) - 1
+        if 0 <= email_index < len(email_addresses):
+            EmailAddress.delete_email_address(email_addresses[email_index][0])
+            print("Email address deleted successfully.")
+        else:
+            print("Invalid selection.")
+    elif choice == '4':
+        return
+    else:
+        print("Invalid choice! Please try again.")
+
+    time.sleep(1)
+    update_email_addresses_options(person_id, auto_select)
+
     clear_screen()
     person = Person.get_person(person_id)
     if not person:
